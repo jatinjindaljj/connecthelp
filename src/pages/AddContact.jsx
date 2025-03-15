@@ -19,6 +19,19 @@ export default function AddContact() {
 
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+  // Function to set today's date
+  const setToday = (field) => {
+    const today = new Date();
+    const year = today.getFullYear().toString();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    
+    setFormData({
+      ...formData,
+      [field]: `${year}-${month}-${day}`
+    });
+  };
+
   const updateBirthdayPart = (part, value) => {
     const currentDate = formData.birthday ? formData.birthday.split('-') : ['','',''];
     const [year = '', month = '', day = ''] = currentDate;
@@ -102,55 +115,66 @@ export default function AddContact() {
   };
 
   return (
-    <div className="add-contact-page p-6">
-      <div className="header mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Add New Contact</h1>
-      </div>
+    <div className="max-w-screen-md mx-auto p-4 sm:p-6 lg:p-8">
+      <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Add New Contact</h1>
       
-      <div className="form-container bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="form-group">
-            <label className="block text-sm font-medium mb-1">Name *</label>
-            <input
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="input-field w-full p-2 border rounded"
-              placeholder="Full Name"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label className="block text-sm font-medium mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="input-field w-full p-2 border rounded"
-              placeholder="Email Address"
-            />
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          {/* Name and Email Inputs */}
+          <div className="space-y-4 sm:space-y-6">
+            <div className="form-group">
+              <label className="block text-sm sm:text-base font-medium mb-1">Name</label>
+              <input
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="w-full p-2 sm:p-3 border rounded-lg text-sm sm:text-base"
+              />
+            </div>
+            <div className="form-group">
+              <label className="block text-sm sm:text-base font-medium mb-1">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full p-2 sm:p-3 border rounded-lg text-sm sm:text-base"
+              />
+            </div>
           </div>
 
+          {/* Phone Number */}
           <div className="form-group">
-            <label className="block text-sm font-medium mb-1">Phone</label>
+            <label className="block text-sm sm:text-base font-medium mb-1">Phone</label>
             <input
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="input-field w-full p-2 border rounded"
-              placeholder="Phone Number"
+              className="w-full p-2 sm:p-3 border rounded-lg text-sm sm:text-base"
             />
           </div>
+        </div>
 
+        {/* Date Selectors */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          {/* Birthday */}
           <div className="form-group">
-            <label className="block text-sm font-medium mb-1">Birthday</label>
-            <div className="flex space-x-2">
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-sm sm:text-base font-medium">Birthday</label>
+              <button
+                type="button"
+                onClick={() => setToday('birthday')}
+                className="text-xs sm:text-sm text-blue-600 hover:text-blue-800"
+              >
+                Set Today
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
               <select
                 value={formData.birthday?.split('-')[1] || ''}
                 onChange={(e) => updateBirthdayPart('month', e.target.value)}
-                className="input-field w-1/3 p-2 border rounded"
+                className="w-full p-2 sm:p-3 border rounded-lg text-sm sm:text-base"
               >
                 <option value="">Month</option>
                 {months.map((month, index) => (
@@ -160,7 +184,7 @@ export default function AddContact() {
               <select
                 value={formData.birthday?.split('-')[2] || ''}
                 onChange={(e) => updateBirthdayPart('day', e.target.value)}
-                className="input-field w-1/3 p-2 border rounded"
+                className="w-full p-2 sm:p-3 border rounded-lg text-sm sm:text-base"
               >
                 <option value="">Day</option>
                 {Array.from({length: 31}, (_, i) => i + 1).map((day) => (
@@ -172,19 +196,32 @@ export default function AddContact() {
                 value={formData.birthday?.split('-')[0] || ''}
                 onChange={(e) => updateBirthdayPart('year', e.target.value)}
                 onFocus={(e) => e.target.select()}
-                className="input-field w-1/3 p-2 border rounded"
+                className="w-full p-2 sm:p-3 border rounded-lg text-sm sm:text-base"
                 placeholder="Year"
               />
             </div>
           </div>
 
+          {/* Anniversary */}
           <div className="form-group">
-            <label className="block text-sm font-medium mb-1">Anniversary</label>
-            <div className="flex space-x-2">
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-sm sm:text-base font-medium">
+                Anniversary 
+                <span className="text-gray-400">(optional)</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => setToday('anniversary')}
+                className="text-xs sm:text-sm text-blue-600 hover:text-blue-800"
+              >
+                Set Today
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
               <select
                 value={formData.anniversary?.split('-')[1] || ''}
                 onChange={(e) => updateAnniversaryPart('month', e.target.value)}
-                className="input-field w-1/3 p-2 border rounded"
+                className="w-full p-2 sm:p-3 border rounded-lg text-sm sm:text-base"
               >
                 <option value="">Month</option>
                 {months.map((month, index) => (
@@ -194,7 +231,7 @@ export default function AddContact() {
               <select
                 value={formData.anniversary?.split('-')[2] || ''}
                 onChange={(e) => updateAnniversaryPart('day', e.target.value)}
-                className="input-field w-1/3 p-2 border rounded"
+                className="w-full p-2 sm:p-3 border rounded-lg text-sm sm:text-base"
               >
                 <option value="">Day</option>
                 {Array.from({length: 31}, (_, i) => i + 1).map((day) => (
@@ -206,54 +243,64 @@ export default function AddContact() {
                 value={formData.anniversary?.split('-')[0] || ''}
                 onChange={(e) => updateAnniversaryPart('year', e.target.value)}
                 onFocus={(e) => e.target.select()}
-                className="input-field w-1/3 p-2 border rounded"
+                className="w-full p-2 sm:p-3 border rounded-lg text-sm sm:text-base"
                 placeholder="Year"
               />
             </div>
           </div>
+        </div>
 
-          <div className="form-group">
-            <label className="block text-sm font-medium mb-1">Personality</label>
-            <input
-              name="personality"
-              value={formData.personality}
-              onChange={handleChange}
-              placeholder="e.g., friendly, outgoing, reserved"
-              className="input-field w-full p-2 border rounded"
-            />
-          </div>
+        {/* Personality */}
+        <div className="form-group">
+          <label className="block text-sm sm:text-base font-medium mb-1">
+            Personality 
+            <span className="text-gray-400">(optional)</span>
+          </label>
+          <input
+            name="personality"
+            value={formData.personality}
+            onChange={handleChange}
+            placeholder="e.g., friendly, outgoing, reserved"
+            className="w-full p-2 sm:p-3 border rounded-lg text-sm sm:text-base"
+          />
+        </div>
 
-          <div className="form-group">
-            <label className="block text-sm font-medium mb-1">Notes</label>
-            <textarea
-              name="notes"
-              value={formData.notes}
-              onChange={handleChange}
-              rows="3"
-              className="input-field w-full p-2 border rounded"
-              placeholder="Additional notes about this contact"
-            ></textarea>
-          </div>
+        {/* Notes */}
+        <div className="form-group">
+          <label className="block text-sm sm:text-base font-medium mb-1">
+            Notes 
+            <span className="text-gray-400">(optional)</span>
+          </label>
+          <textarea
+            name="notes"
+            value={formData.notes}
+            onChange={handleChange}
+            rows="3"
+            className="w-full p-2 sm:p-3 border rounded-lg text-sm sm:text-base"
+            placeholder="Additional notes about this contact"
+          />
+        </div>
 
-          <div className="flex justify-end space-x-3 mt-6">
-            <button
-              type="button"
-              onClick={() => navigate('/contacts')}
-              className="cancel-btn px-4 py-2 bg-gray-200 rounded"
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="submit-btn px-4 py-2 bg-blue-500 text-white rounded"
-              disabled={loading}
-            >
-              {loading ? 'Saving...' : 'Save Contact'}
-            </button>
-          </div>
-        </form>
-      </div>
+        {/* Submit Button */}
+        <div className="flex justify-end space-x-3 mt-6">
+          <button
+            type="button"
+            onClick={() => navigate('/contacts')}
+            className="cancel-btn px-4 py-2 bg-gray-200 rounded-lg text-sm sm:text-base"
+            disabled={loading}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="submit-btn px-6 py-2 bg-blue-600 text-white rounded-lg
+              hover:bg-blue-700 transition-colors text-sm sm:text-base"
+            disabled={loading}
+          >
+            {loading ? 'Saving...' : 'Save Contact'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -206,36 +206,30 @@ export default function ContactCard({ contact, onSave, onDelete }) {
           <div className="contact-details space-y-1 mt-2">
             <p className="contact-email flex items-center">
               <span className="w-24 text-gray-500">Email:</span> 
-              <span>{contact.email}</span>
+              <span>{contact.email || 'Not provided'}</span>
             </p>
             <p className="contact-phone flex items-center">
               <span className="w-24 text-gray-500">Phone:</span> 
-              <span>{contact.phone}</span>
+              <span>{contact.phone || 'Not provided'}</span>
             </p>
-            {contact.birthday && (
-              <p className="contact-birthday flex items-center">
-                <span className="w-24 text-gray-500">Birthday:</span> 
-                <span>{formatDate(contact.birthday)}</span>
-              </p>
-            )}
-            {contact.anniversary && (
-              <p className="contact-anniversary flex items-center">
-                <span className="w-24 text-gray-500">Anniversary:</span> 
-                <span>{formatDate(contact.anniversary)}</span>
-              </p>
-            )}
-            {contact.personality && (
-              <p className="contact-personality flex items-center">
-                <span className="w-24 text-gray-500">Personality:</span> 
-                <span>{contact.personality}</span>
-              </p>
-            )}
-            {contact.notes && (
-              <p className="contact-notes mt-2">
-                <span className="block text-gray-500">Notes:</span> 
-                <span className="block pl-2 border-l-2 border-gray-200 mt-1">{contact.notes}</span>
-              </p>
-            )}
+            <p className="contact-birthday flex items-center">
+              <span className="w-24 text-gray-500">Birthday:</span> 
+              <span>{contact.birthday ? formatDate(contact.birthday) : 'Not provided'}</span>
+            </p>
+            <p className="contact-anniversary flex items-center">
+              <span className="w-24 text-gray-500">Anniversary:</span> 
+              <span>{contact.anniversary ? formatDate(contact.anniversary) : 'Not provided'}</span>
+            </p>
+            <p className="contact-personality flex items-center">
+              <span className="w-24 text-gray-500">Personality:</span> 
+              <span>{contact.personality || 'Not provided'}</span>
+            </p>
+            <p className="contact-notes mt-2">
+              <span className="block text-gray-500">Notes:</span> 
+              <span className="block pl-2 border-l-2 border-gray-200 mt-1">
+                {contact.notes || 'No notes available'}
+              </span>
+            </p>
           </div>
           
           <div className="flex space-x-2 mt-4">
