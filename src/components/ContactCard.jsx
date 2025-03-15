@@ -24,13 +24,29 @@ export default function ContactCard({ contact, onSave, onDelete }) {
         return;
       }
 
+      // Get current user ID
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+      
+      // Create a copy of the form data to update
+      const updatedData = { ...formData };
+      
+      // Only set user_id if we have a valid UUID and it's not already set
+      if (userId && !updatedData.user_id) {
+        updatedData.user_id = userId;
+      }
+
       const { error } = await supabase
         .from('contacts')
-        .update(formData)
+        .update(updatedData)
         .eq('id', contact.id);
 
-      if(error) throw error;
-      onSave(formData);
+      if(error) {
+        console.error('Update error:', error);
+        throw error;
+      }
+      
+      onSave(updatedData);
       setIsEditing(false);
     } catch (error) {
       console.error('Save error:', error);

@@ -32,6 +32,19 @@ export default function AddContact() {
     setFormData({...formData, birthday: `${newDate.year}-${newDate.month}-${newDate.day}`});
   };
 
+  const updateAnniversaryPart = (part, value) => {
+    const currentDate = formData.anniversary ? formData.anniversary.split('-') : ['','',''];
+    const [year = '', month = '', day = ''] = currentDate;
+    
+    const newDate = {
+      year: part === 'year' ? value : year,
+      month: part === 'month' ? value.padStart(2, '0') : month,
+      day: part === 'day' ? value.padStart(2, '0') : day
+    };
+    
+    setFormData({...formData, anniversary: `${newDate.year}-${newDate.month}-${newDate.day}`});
+  };
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -56,16 +69,31 @@ export default function AddContact() {
     }
 
     try {
+      // Get current user ID
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+      
+      // Prepare contact data without user_id if not authenticated
+      const contactData = {
+        ...formData,
+        birthday: formData.birthday || null,
+        anniversary: formData.anniversary || null
+      };
+      
+      // Only add user_id if we have a valid UUID
+      if (userId) {
+        contactData.user_id = userId;
+      }
+
       const { data, error } = await supabase
         .from('contacts')
-        .insert([{
-          ...formData,
-          birthday: formData.birthday || null,
-          anniversary: formData.anniversary || null
-        }])
+        .insert([contactData])
         .select();
 
-      if(error) throw error;
+      if(error) {
+        console.error('Creation error:', error);
+        throw error;
+      }
       navigate('/contacts');
     } catch (error) {
       console.error('Creation error:', error);
@@ -152,16 +180,36 @@ export default function AddContact() {
 
           <div className="form-group">
             <label className="block text-sm font-medium mb-1">Anniversary</label>
-            <DatePicker
-              selected={formData.anniversary ? new Date(formData.anniversary) : null}
-              onChange={(date) => setFormData({
-                ...formData,
-                anniversary: date ? date.toISOString().split('T')[0] : ''
-              })}
-              dateFormat="yyyy-MM-dd"
-              className="w-full p-2 border rounded"
-              placeholderText="Select anniversary"
-            />
+            <div className="flex space-x-2">
+              <select
+                value={formData.anniversary?.split('-')[1] || ''}
+                onChange={(e) => updateAnniversaryPart('month', e.target.value)}
+                className="input-field w-1/3 p-2 border rounded"
+              >
+                <option value="">Month</option>
+                {months.map((month, index) => (
+                  <option key={index} value={String(index + 1).padStart(2, '0')}>{month}</option>
+                ))}
+              </select>
+              <select
+                value={formData.anniversary?.split('-')[2] || ''}
+                onChange={(e) => updateAnniversaryPart('day', e.target.value)}
+                className="input-field w-1/3 p-2 border rounded"
+              >
+                <option value="">Day</option>
+                {Array.from({length: 31}, (_, i) => i + 1).map((day) => (
+                  <option key={day} value={String(day).padStart(2, '0')}>{day}</option>
+                ))}
+              </select>
+              <input
+                type="text"
+                value={formData.anniversary?.split('-')[0] || ''}
+                onChange={(e) => updateAnniversaryPart('year', e.target.value)}
+                onFocus={(e) => e.target.select()}
+                className="input-field w-1/3 p-2 border rounded"
+                placeholder="Year"
+              />
+            </div>
           </div>
 
           <div className="form-group">
