@@ -5,15 +5,37 @@ import Settings from './pages/Settings';
 import AddContact from './pages/AddContact';
 import { Home, Users, Settings as SettingsIcon } from 'lucide-react';
 import MobileNav from './components/MobileNav';
+import { useState, useEffect } from 'react';
+import { registerServiceWorker } from './utils/notificationManager';
 
 export default function App() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    // Register service worker for notifications
+    const initApp = async () => {
+      try {
+        await registerServiceWorker();
+        console.log('Service worker registered successfully');
+      } catch (error) {
+        console.error('Failed to register service worker:', error);
+      }
+    };
+
+    initApp();
+  }, []);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
         {/* Modern Header */}
         <header className="bg-white/80 backdrop-blur-sm border-b border-gray-100 fixed w-full top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white" data-component-name="App">
+            <div className="flex items-center justify-between h-16 bg-white">
               <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:opacity-75 transition-opacity">
                 ConnectKeep
               </Link>

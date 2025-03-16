@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { Download, Upload, Save } from 'lucide-react';
 import { loadContacts, saveContacts } from '../utils/storage';
+import NotificationSettings from '../components/NotificationSettings';
 
 export default function Settings() {
   const [importStatus, setImportStatus] = useState('');
@@ -128,7 +129,17 @@ export default function Settings() {
         <h2 className="text-xl font-semibold mb-6">Settings</h2>
         
         <div className="space-y-6">
+          {/* Notification Settings Section */}
           <div className="space-y-2">
+            <h3 className="text-lg font-medium">Notifications</h3>
+            <p className="text-gray-500 text-sm">Configure daily reminders for birthdays and special events.</p>
+            
+            <div className="mt-4">
+              <NotificationSettings />
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-100 pt-6 space-y-2">
             <h3 className="text-lg font-medium">Data Management</h3>
             <p className="text-gray-500 text-sm">Export your contacts or import from a backup file.</p>
             
