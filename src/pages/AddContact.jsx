@@ -133,7 +133,10 @@ export default function AddContact() {
               />
             </div>
             <div className="form-group">
-              <label className="block text-sm sm:text-base font-medium mb-1">Email</label>
+              <label className="block text-sm sm:text-base font-medium mb-1">
+                Email
+                <span className="text-gray-400">(optional)</span>
+              </label>
               <input
                 type="email"
                 name="email"
