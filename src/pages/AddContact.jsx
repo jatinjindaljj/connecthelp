@@ -116,11 +116,17 @@ export default function AddContact() {
 
   const handleImportContacts = async () => {
     try {
-      const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: true });
+      const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
       if (contacts && contacts.length > 0) {
-        // Process imported contacts
-        console.log('Imported contacts:', contacts);
-        alert(`Successfully imported ${contacts.length} contacts`);
+        const contact = contacts[0];
+        
+        setFormData({
+          ...formData,
+          name: contact.name?.[0] || '',
+          phone: contact.tel?.[0] || ''
+        });
+        
+        alert(`Imported contact: ${contact.name?.[0] || 'Unknown'}`);
       }
     } catch (error) {
       console.error('Error accessing contacts:', error);
@@ -139,7 +145,7 @@ export default function AddContact() {
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
           </svg>
-          Import Contacts
+          Import a Single Contact from Your Device
         </button>
       </div>
       
