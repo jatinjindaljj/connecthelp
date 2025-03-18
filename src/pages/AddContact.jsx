@@ -114,9 +114,34 @@ export default function AddContact() {
     }
   };
 
+  const handleImportContacts = async () => {
+    try {
+      const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: true });
+      if (contacts && contacts.length > 0) {
+        // Process imported contacts
+        console.log('Imported contacts:', contacts);
+        alert(`Successfully imported ${contacts.length} contacts`);
+      }
+    } catch (error) {
+      console.error('Error accessing contacts:', error);
+      alert('Error accessing contacts. Please ensure you have granted permission.');
+    }
+  };
+
   return (
     <div className="max-w-screen-md mx-auto p-4 sm:p-6 lg:p-8">
-      <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Add New Contact</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl sm:text-2xl font-bold" data-component-name="AddContact">Add New Contact</h1>
+        <button
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          onClick={handleImportContacts}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+          </svg>
+          Import Contacts
+        </button>
+      </div>
       
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -285,7 +310,7 @@ export default function AddContact() {
         </div>
 
         {/* Submit Button */}
-        <div className="flex justify-end space-x-3 mt-6">
+        <div className="flex justify-end space-x-3 mt-6 mb-6 sm:mb-0" data-component-name="AddContact">
           <button
             type="button"
             onClick={() => navigate('/contacts')}
