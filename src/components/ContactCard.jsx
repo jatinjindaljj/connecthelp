@@ -70,6 +70,19 @@ export default function ContactCard({ contact, onSave, onDelete }) {
 
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+  const updateBirthdayPart = (part, value) => {
+    const currentDate = formData.birthday ? formData.birthday.split('-') : ['','',''];
+    const [year = '', month = '', day = ''] = currentDate;
+    
+    const newDate = {
+      year: part === 'year' ? value : year,
+      month: part === 'month' ? value.padStart(2, '0') : month,
+      day: part === 'day' ? value.padStart(2, '0') : day
+    };
+    
+    setFormData({...formData, birthday: `${newDate.year}-${newDate.month}-${newDate.day}`});
+  };
+
   const updateAnniversaryPart = (part, value) => {
     const currentDate = formData.anniversary ? formData.anniversary.split('-') : ['','',''];
     const [year = '', month = '', day = ''] = currentDate;
@@ -125,41 +138,70 @@ export default function ContactCard({ contact, onSave, onDelete }) {
 
           <div className="form-group">
             <label className="block text-sm font-medium">Birthday:</label>
-            <DatePicker
-              selected={parseDateSafe(formData.birthday)}
-              onChange={(date) => {
-                const isoDate = date ? 
-                  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-                  : '';
-                setFormData({...formData, birthday: isoDate});
-              }}
-              dateFormat="yyyy-MM-dd"
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-              placeholderText="Select birthday"
-              showYearDropdown
-              dropdownMode="select"
-              maxDate={new Date()}
-              popperPlacement="auto"
-            />
+            <div className="grid grid-cols-3 gap-2">
+              <select
+                value={formData.birthday?.split('-')[1] || ''}
+                onChange={(e) => updateBirthdayPart('month', e.target.value)}
+                className="w-full p-2 border rounded-lg text-sm"
+              >
+                <option value="">Month</option>
+                {months.map((month, index) => (
+                  <option key={index} value={String(index + 1).padStart(2, '0')}>{month}</option>
+                ))}
+              </select>
+              <select
+                value={formData.birthday?.split('-')[2] || ''}
+                onChange={(e) => updateBirthdayPart('day', e.target.value)}
+                className="w-full p-2 border rounded-lg text-sm"
+              >
+                <option value="">Day</option>
+                {Array.from({length: 31}, (_, i) => i + 1).map((day) => (
+                  <option key={day} value={String(day).padStart(2, '0')}>{day}</option>
+                ))}
+              </select>
+              <input
+                type="text"
+                value={formData.birthday?.split('-')[0] || ''}
+                onChange={(e) => updateBirthdayPart('year', e.target.value)}
+                onFocus={(e) => e.target.select()}
+                className="w-full p-2 border rounded-lg text-sm"
+                placeholder="Year"
+              />
+            </div>
           </div>
 
           <div className="form-group">
             <label className="block text-sm font-medium">Anniversary:</label>
-            <DatePicker
-              selected={parseDateSafe(formData.anniversary)}
-              onChange={(date) => {
-                const isoDate = date ? 
-                  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-                  : '';
-                setFormData({...formData, anniversary: isoDate});
-              }}
-              dateFormat="yyyy-MM-dd"
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-              placeholderText="Select anniversary"
-              showYearDropdown
-              dropdownMode="select"
-              popperPlacement="auto"
-            />
+            <div className="grid grid-cols-3 gap-2">
+              <select
+                value={formData.anniversary?.split('-')[1] || ''}
+                onChange={(e) => updateAnniversaryPart('month', e.target.value)}
+                className="w-full p-2 border rounded-lg text-sm"
+              >
+                <option value="">Month</option>
+                {months.map((month, index) => (
+                  <option key={index} value={String(index + 1).padStart(2, '0')}>{month}</option>
+                ))}
+              </select>
+              <select
+                value={formData.anniversary?.split('-')[2] || ''}
+                onChange={(e) => updateAnniversaryPart('day', e.target.value)}
+                className="w-full p-2 border rounded-lg text-sm"
+              >
+                <option value="">Day</option>
+                {Array.from({length: 31}, (_, i) => i + 1).map((day) => (
+                  <option key={day} value={String(day).padStart(2, '0')}>{day}</option>
+                ))}
+              </select>
+              <input
+                type="text"
+                value={formData.anniversary?.split('-')[0] || ''}
+                onChange={(e) => updateAnniversaryPart('year', e.target.value)}
+                onFocus={(e) => e.target.select()}
+                className="w-full p-2 border rounded-lg text-sm"
+                placeholder="Year"
+              />
+            </div>
           </div>
 
           <div className="form-group">
