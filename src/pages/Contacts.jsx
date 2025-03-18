@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ContactCard from '../components/ContactCard';
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import supabase from '../supabaseClient';
+import { formatDate, getMonthFromDate, getMonthName, getAllMonths } from '../utils/dateHelpers';
 
 const Contacts = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -129,6 +132,37 @@ const Contacts = () => {
     }
   };
 
+  // Filter contacts based on search term and selected month
+  const filteredContacts = contacts.filter(contact => {
+    const matchesSearch = searchTerm === '' || 
+      (contact.name && contact.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (contact.phone && contact.phone.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesMonth = selectedMonth === '' || 
+      (contact.birthday && getMonthFromDate(contact.birthday) === selectedMonth);
+    
+    return matchesSearch && matchesMonth;
+  });
+
+  // Group contacts by first letter
+  const groupedContacts = filteredContacts.reduce((acc, contact) => {
+    if (!contact.name) return acc;
+    
+    const firstLetter = contact.name.charAt(0).toUpperCase();
+    if (!acc[firstLetter]) {
+      acc[firstLetter] = [];
+    }
+    acc[firstLetter].push(contact);
+    return acc;
+  }, {});
+
+  // Sort the letters alphabetically
+  const sortedLetters = Object.keys(groupedContacts).sort();
+
+  // Get months for dropdown
+  const months = getAllMonths();
+
   return (
     <div className="contacts-page p-6">
       <div className="header flex justify-between items-center mb-6">
@@ -142,23 +176,74 @@ const Contacts = () => {
         </button>
       </div>
 
+      <div className="filters mb-6 flex flex-col md:flex-row gap-4">
+        <div className="search-container relative flex-grow">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search size={18} className="text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search contacts..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input pl-10 w-full p-2 border rounded-md"
+          />
+        </div>
+        <div className="month-filter">
+          <select
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="month-select w-full md:w-48 p-2 border rounded-md"
+          >
+            <option value="">All Birthdays</option>
+            {months.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       {loading ? (
         <div className="loading-container flex justify-center items-center py-10">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
         </div>
-      ) : contacts.length === 0 ? (
+      ) : filteredContacts.length === 0 ? (
         <div className="empty-state p-6 bg-gray-50 rounded-lg text-center">
-          <p className="text-gray-600">No contacts found. Add your first contact!</p>
+          <p className="text-gray-600">No contacts found. {searchTerm || selectedMonth ? 'Try adjusting your filters.' : 'Add your first contact!'}</p>
         </div>
       ) : (
-        <div className="contacts-grid grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {contacts.map(contact => (
-            <ContactCard
-              key={contact.id}
-              contact={contact}
-              onSave={handleSave}
-              onDelete={handleDelete}
-            />
+        <div className="contacts-by-letter">
+          {/* Alphabet navigation */}
+          <div className="alphabet-nav flex flex-wrap justify-center gap-1 mb-4 sticky top-0 bg-white z-20 py-2 border-b">
+            {sortedLetters.map(letter => (
+              <a 
+                key={letter} 
+                href={`#letter-${letter}`} 
+                className="letter-link w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200"
+              >
+                {letter}
+              </a>
+            ))}
+          </div>
+          
+          {sortedLetters.map(letter => (
+            <div id={`letter-${letter}`} key={letter} className="letter-group mb-6">
+              <div className="letter-header sticky top-12 bg-white z-10 py-2 border-b">
+                <h2 className="text-xl font-bold text-gray-700">{letter}</h2>
+              </div>
+              <div className="contacts-grid grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-3">
+                {groupedContacts[letter].map(contact => (
+                  <ContactCard
+                    key={contact.id}
+                    contact={contact}
+                    onSave={handleSave}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       )}

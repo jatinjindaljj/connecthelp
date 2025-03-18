@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import supabase  from '../supabaseClient'; // Import supabase instance
+import supabase from '../supabaseClient';
+import { formatDate, getMonthName } from '../utils/dateHelpers';
 
 export default function ContactCard({ contact, onSave, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -52,13 +53,6 @@ export default function ContactCard({ contact, onSave, onDelete }) {
       console.error('Save error:', error);
       alert(`Error saving contact: ${error.message}`);
     }
-  };
-
-  // Format date for display (YYYY-MM-DD to DD/MM/YYYY)
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
   };
 
   // Format date for input field (YYYY-MM-DD)
