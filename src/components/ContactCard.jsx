@@ -137,7 +137,16 @@ export default function ContactCard({ contact, onSave, onDelete }) {
           </div>
 
           <div className="form-group">
-            <label className="block text-sm font-medium">Birthday:</label>
+            <div className="flex justify-between items-center mb-1">
+              <label className="block text-sm font-medium" data-component-name="ContactCard">Birthday:</label>
+              <button
+                type="button"
+                onClick={() => setFormData({...formData, birthday: new Date().toISOString().split('T')[0]})}
+                className="text-xs sm:text-sm text-blue-600 hover:text-blue-800"
+              >
+                Set Today
+              </button>
+            </div>
             <div className="grid grid-cols-3 gap-2">
               <select
                 value={formData.birthday?.split('-')[1] || ''}
@@ -171,7 +180,16 @@ export default function ContactCard({ contact, onSave, onDelete }) {
           </div>
 
           <div className="form-group">
-            <label className="block text-sm font-medium">Anniversary:</label>
+            <div className="flex justify-between items-center mb-1">
+              <label className="block text-sm font-medium" data-component-name="ContactCard">Anniversary:</label>
+              <button
+                type="button"
+                onClick={() => setFormData({...formData, anniversary: new Date().toISOString().split('T')[0]})}
+                className="text-xs sm:text-sm text-blue-600 hover:text-blue-800"
+              >
+                Set Today
+              </button>
+            </div>
             <div className="grid grid-cols-3 gap-2">
               <select
                 value={formData.anniversary?.split('-')[1] || ''}

@@ -5,6 +5,7 @@ export default function NotificationCard({ contact, onComplete }) {
   const [isMaximized, setIsMaximized] = useState(true);
   const [isMessageSent, setIsMessageSent] = useState(false);
   const [message, setMessage] = useState(generateMessage(contact));
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
 
   const handleRefresh = () => {
     setMessage(generateMessage(contact, true)); // Pass true to force a random message
@@ -101,6 +102,36 @@ export default function NotificationCard({ contact, onComplete }) {
               rows={4}
             />
           </div>
+
+          {/* Additional Details Button */}
+          {(contact.personality || contact.notes) && (
+            <button
+              onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
+              className="w-full py-4 px-0 flex items-center justify-between hover:bg-gray-50 transition-colors"
+              data-component-name="NotificationCard"
+            >
+              <span className="text-sm font-medium text-gray-700">Additional Details</span>
+              <ChevronDown size={18} className={`transform ${isDetailsExpanded ? 'rotate-180' : ''} transition-transform`} />
+            </button>
+          )}
+
+          {/* Personality and Notes Card */}
+          {isDetailsExpanded && (
+            <div className="px-4 pb-4 space-y-3">
+              {contact.personality && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-1">Personality</h4>
+                  <p className="text-sm text-gray-600">{contact.personality}</p>
+                </div>
+              )}
+              {contact.notes && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-1">Notes</h4>
+                  <p className="text-sm text-gray-600">{contact.notes}</p>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="actions-container flex items-center justify-between">
             <button
