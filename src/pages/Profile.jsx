@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { User, Mail, Lock, Save } from 'lucide-react';
+import { User, Mail, Lock, Save, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../utils/supabaseClient';
 import AuthModal from '../components/Auth/AuthModal';
 
 export default function Profile() {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -80,6 +80,16 @@ export default function Profile() {
       setError(error.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error("Error signing out:", error);
+      setError(error.message);
     }
   };
 
@@ -278,6 +288,25 @@ export default function Profile() {
               )}
             </button>
           </form>
+        </div>
+        
+        {/* Logout Section */}
+        <div className="bg-white rounded-lg shadow-sm p-6 lg:col-span-3 mt-4">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Account Actions</h2>
+          
+          <div className="border-t border-gray-200 pt-4">
+            <p className="text-gray-600 mb-4">
+              Sign out from your account across all devices
+            </p>
+            
+            <button
+              onClick={handleLogout}
+              className="flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </button>
+          </div>
         </div>
       </div>
     </div>

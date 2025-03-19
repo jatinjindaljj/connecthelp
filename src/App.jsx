@@ -20,9 +20,21 @@ function Header() {
     <header className="bg-white/80 backdrop-blur-sm border-b border-gray-100 fixed w-full top-0 z-50">
       <div className="px-4 sm:px-6 lg:px-8 bg-white" data-component-name="App">
         <div className="flex items-center justify-between h-16 bg-white">
-          <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:opacity-75 transition-opacity">
-            ConnectKeep
-          </Link>
+          <div className="flex items-center">
+            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:opacity-75 transition-opacity">
+              ConnectKeep
+            </Link>
+            
+            {!user && (
+              <Link 
+                to="/login" 
+                className="md:hidden flex items-center ml-3 px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+              >
+                <LogIn className="w-3 h-3 mr-1" />
+                Login
+              </Link>
+            )}
+          </div>
           
           <div className="flex items-center space-x-6">
             <nav className="hidden md:flex space-x-4">
