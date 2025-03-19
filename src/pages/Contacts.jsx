@@ -192,19 +192,19 @@ const Contacts = () => {
           <div className="bg-white p-8 rounded-lg shadow-sm max-w-md w-full">
             <Users className="w-16 h-16 mx-auto text-gray-400 mb-4" />
             <h2 className="text-xl font-semibold text-gray-700 mb-2">Sign in to view contacts</h2>
-            <p className="text-gray-500 mb-6">You need to be logged in to view and manage your contacts</p>
-            
-            <button
-              onClick={() => setShowAuthModal(true)}
-              className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              <LogIn className="w-4 h-4 mr-2" />
-              Sign In / Create Account
-            </button>
+            <p className="text-gray-500 mb-6">You need to be logged in to view and manage your contacts. Please use the sign-in button in the top navigation.</p>
           </div>
         </div>
         
-        <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+        {showAuthModal && (
+          <AuthModal 
+            onClose={() => setShowAuthModal(false)} 
+            onSuccess={() => {
+              setShowAuthModal(false);
+              fetchContacts();
+            }}
+          />
+        )}
       </div>
     );
   }

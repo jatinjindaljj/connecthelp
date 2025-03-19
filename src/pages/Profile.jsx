@@ -93,23 +93,23 @@ export default function Profile() {
   }
 
   // If user is not authenticated, show login prompt
-  if (!user) {
+  if (!user && !loading) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-center py-10">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] p-6">
+        <div className="bg-white p-8 rounded-lg shadow-sm max-w-md w-full text-center">
           <User className="w-16 h-16 mx-auto text-gray-400 mb-4" />
           <h2 className="text-xl font-semibold text-gray-700 mb-2">Sign in to view your profile</h2>
-          <p className="text-gray-500 mb-6">You need to be logged in to view and manage your profile</p>
-          
-          <button
-            onClick={() => setShowAuthModal(true)}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Sign In / Create Account
-          </button>
+          <p className="text-gray-500 mb-6">You need to be logged in to view and manage your profile. Please use the sign-in button in the top navigation.</p>
         </div>
         
-        <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+        {showAuthModal && (
+          <AuthModal 
+            onClose={() => setShowAuthModal(false)} 
+            onSuccess={() => {
+              setShowAuthModal(false);
+            }}
+          />
+        )}
       </div>
     );
   }

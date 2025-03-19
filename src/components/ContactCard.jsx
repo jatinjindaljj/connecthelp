@@ -1,8 +1,34 @@
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import supabase from '../supabaseClient';
+import supabase from '../utils/supabaseClient';
 import { formatDate, getMonthName } from '../utils/dateHelpers';
+
+// Format phone number for display
+function formatPhoneNumber(phoneNumber) {
+  if (!phoneNumber) return '';
+  
+  // Clean the phone number first (just in case)
+  const cleaned = phoneNumber.replace(/[^\d+]/g, '');
+  
+  // Handle international numbers starting with +
+  if (cleaned.startsWith('+')) {
+    // For international numbers, keep the + and format the rest with spaces
+    // e.g. +1 234 567 8910
+    if (cleaned.length > 3) {
+      return cleaned.replace(/(\+\d{1,3})(\d{3})(\d{3})(\d{4})/, '$1 $2 $3 $4');
+    }
+    return cleaned;
+  }
+  
+  // Handle US-style 10-digit numbers
+  if (cleaned.length === 10) {
+    return cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+  }
+  
+  // If it doesn't match known patterns, return as is
+  return phoneNumber;
+}
 
 export default function ContactCard({ contact, onSave, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -11,9 +37,18 @@ export default function ContactCard({ contact, onSave, onDelete }) {
   const handleEdit = () => setIsEditing(true);
   
   const handleChange = (e) => {
+    let value = e.target.value;
+    const name = e.target.name;
+    
+    // Clean phone numbers when the phone field is updated
+    if (name === 'phone') {
+      // Keep only digits and the plus sign for international numbers
+      value = value.replace(/[^0-9+]/g, '');
+    }
+    
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
   };
 
@@ -264,7 +299,13 @@ export default function ContactCard({ contact, onSave, onDelete }) {
             </p>
             <p className="contact-phone flex items-center">
               <span className="w-24 text-gray-500">Phone:</span> 
-              <span>{contact.phone || 'Not provided'}</span>
+              <span>
+                {contact.phone ? (
+                  <a href={`tel:${contact.phone}`} className="text-blue-600 hover:underline">
+                    {formatPhoneNumber(contact.phone)}
+                  </a>
+                ) : 'Not provided'}
+              </span>
             </p>
             <p className="contact-birthday flex items-center">
               <span className="w-24 text-gray-500">Birthday:</span> 

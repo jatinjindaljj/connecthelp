@@ -61,25 +61,17 @@ export default function Dashboard() {
     <div className="dashboard-container p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="dashboard-title text-2xl font-bold text-gray-800">Dashboard</h1>
-        {!user ? (
-          <button
-            onClick={() => setShowAuthModal(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Sign In
-          </button>
-        ) : (
-          <button 
-            onClick={() => navigate('/profile')}
-            className="flex items-center gap-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
-          >
-            <User size={16} />
-            My Profile
-          </button>
-        )}
       </div>
       
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      {showAuthModal && (
+        <AuthModal 
+          onClose={() => setShowAuthModal(false)} 
+          onSuccess={() => {
+            setShowAuthModal(false);
+            fetchContacts();
+          }}
+        />
+      )}
       
       {loading ? (
         <div className="loading-container flex justify-center items-center py-10">
@@ -95,14 +87,8 @@ export default function Dashboard() {
                 </div>
                 <h2 className="text-xl font-semibold text-gray-800 mb-2">Welcome to ConnectKeep</h2>
                 <p className="text-gray-600 max-w-md mb-6">
-                  Sign in to manage your contacts and never miss important dates
+                  Sign in to manage your contacts and never miss important dates. Please use the sign-in button in the top navigation.
                 </p>
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  Get Started
-                </button>
               </div>
             </div>
           ) : birthdays.length === 0 && anniversaries.length === 0 ? (

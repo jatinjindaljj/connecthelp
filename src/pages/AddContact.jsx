@@ -64,9 +64,18 @@ export default function AddContact() {
   };
 
   const handleChange = (e) => {
+    let value = e.target.value;
+    const name = e.target.name;
+    
+    // Clean phone numbers when the phone field is updated
+    if (name === 'phone') {
+      // Keep only digits and the plus sign for international numbers
+      value = value.replace(/[^0-9+]/g, '');
+    }
+    
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
   };
 
@@ -131,10 +140,17 @@ export default function AddContact() {
       if (contacts && contacts.length > 0) {
         const contact = contacts[0];
         
+        // Clean phone number by removing spaces, hyphens, parentheses, and other non-numeric characters
+        let phoneNumber = '';
+        if (contact.tel && contact.tel[0]) {
+          // Keep only digits, plus sign (for international numbers)
+          phoneNumber = contact.tel[0].replace(/[^0-9+]/g, '');
+        }
+        
         setFormData({
           ...formData,
           name: contact.name?.[0] || '',
-          phone: contact.tel?.[0] || ''
+          phone: phoneNumber
         });
         
         alert(`Imported contact: ${contact.name?.[0] || 'Unknown'}`);

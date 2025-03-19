@@ -23,7 +23,10 @@ export default function Login() {
         </p>
       </div>
       
-      <AuthModal isOpen={true} onClose={() => navigate('/')} />
+      <AuthModal 
+        onClose={() => navigate('/')} 
+        onSuccess={() => navigate('/')}
+      />
     </div>
   );
 }

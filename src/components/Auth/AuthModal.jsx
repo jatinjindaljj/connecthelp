@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { X } from 'lucide-react';
 
-export default function AuthModal({ isOpen, onClose }) {
+export default function AuthModal({ onClose, onSuccess }) {
   const [activeTab, setActiveTab] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,8 +11,6 @@ export default function AuthModal({ isOpen, onClose }) {
   const [message, setMessage] = useState(null);
   
   const { signIn, signUp } = useAuth();
-  
-  if (!isOpen) return null;
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,6 +23,7 @@ export default function AuthModal({ isOpen, onClose }) {
         await signIn(email, password);
         setMessage('Logged in successfully!');
         setTimeout(() => {
+          if (onSuccess) onSuccess();
           onClose();
         }, 1000);
       } else {
