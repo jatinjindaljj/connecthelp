@@ -18,7 +18,7 @@ function Header() {
   
   return (
     <header className="bg-white/80 backdrop-blur-sm border-b border-gray-100 fixed w-full top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white" data-component-name="App">
+      <div className="px-4 sm:px-6 lg:px-8 bg-white" data-component-name="App">
         <div className="flex items-center justify-between h-16 bg-white">
           <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:opacity-75 transition-opacity">
             ConnectKeep
@@ -26,14 +26,20 @@ function Header() {
           
           <div className="flex items-center space-x-6">
             <nav className="hidden md:flex space-x-4">
-              <a href="/contacts" className="px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors flex items-center">
+              <Link 
+                to="/contacts" 
+                className="px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors flex items-center"
+              >
                 <Users className="w-5 h-5 mr-2" />
                 Contacts
-              </a>
-              <a href="/settings" className="px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors flex items-center">
+              </Link>
+              <Link 
+                to="/settings" 
+                className="px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors flex items-center"
+              >
                 <SettingsIcon className="w-5 h-5 mr-2" />
                 Settings
-              </a>
+              </Link>
             </nav>
             
             {user ? (
