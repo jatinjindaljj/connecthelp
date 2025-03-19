@@ -1,5 +1,21 @@
 {
   "rewrites": [
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/(.*\\.(js|css|svg|png|jpg|jpeg|gif|ico|json))", "destination": "/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*\\.(js))",
+      "headers": [
+        { "key": "Content-Type", "value": "application/javascript" }
+      ]
+    },
+    {
+      "source": "/(.*\\.(css))",
+      "headers": [
+        { "key": "Content-Type", "value": "text/css" }
+      ]
+    }
   ]
 }
