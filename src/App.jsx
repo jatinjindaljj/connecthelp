@@ -43,7 +43,7 @@ function Header() {
             </nav>
             
             {user ? (
-              <div className="relative">
+              <div className="hidden md:block relative">
                 <button 
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   className="flex items-center space-x-2 text-gray-700 hover:text-blue-600"
@@ -76,7 +76,7 @@ function Header() {
             ) : (
               <Link 
                 to="/login" 
-                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                className="hidden md:flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
               >
                 <LogIn className="w-4 h-4 mr-2" />
                 Sign In

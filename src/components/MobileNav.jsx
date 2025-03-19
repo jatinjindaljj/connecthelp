@@ -1,4 +1,4 @@
-import { Home, Users, Settings, User } from 'lucide-react';
+import { Home, Users, Settings, User, LogIn } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -35,13 +35,23 @@ export default function MobileNav() {
           <Settings className="w-5 h-5 mb-1" />
           <span className="text-xs">Settings</span>
         </button>
-        <button 
-          onClick={() => navigate('/profile')}
-          className={`p-2 flex flex-col items-center ${isActive('/profile') ? 'text-blue-600' : 'text-gray-600'}`}
-        >
-          <User className="w-5 h-5 mb-1" />
-          <span className="text-xs">Profile</span>
-        </button>
+        {user ? (
+          <button 
+            onClick={() => navigate('/profile')}
+            className={`p-2 flex flex-col items-center ${isActive('/profile') ? 'text-blue-600' : 'text-gray-600'}`}
+          >
+            <User className="w-5 h-5 mb-1" />
+            <span className="text-xs">Profile</span>
+          </button>
+        ) : (
+          <button 
+            onClick={() => navigate('/login')}
+            className={`p-2 flex flex-col items-center ${isActive('/login') ? 'text-blue-600' : 'text-gray-600'}`}
+          >
+            <LogIn className="w-5 h-5 mb-1" />
+            <span className="text-xs">Sign In</span>
+          </button>
+        )}
       </div>
     </div>
   );
