@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { Download, Upload, Save, Bell } from 'lucide-react';
 import { loadContacts, saveContacts } from '../utils/storage';
 import NotificationSettings from '../components/NotificationSettings';
+import NotificationTester from '../components/NotificationTester';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Settings() {
@@ -160,6 +161,7 @@ export default function Settings() {
       {activeTab === 'notifications' && (
         <div className="notification-tab">
           <NotificationSettings />
+          {user && <NotificationTester />}
         </div>
       )}
       

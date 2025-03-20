@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
-import { initializeNotifications, isNotificationSupported } from '../utils/notificationManager';
+import { 
+  initializeNotifications, 
+  isNotificationSupported, 
+  getUserNotificationSettings,
+  saveUserNotificationSettings
+} from '../utils/notificationManager';
 import supabase from '../utils/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
 import { Clock, Bell, Mail } from 'lucide-react';
@@ -37,16 +42,14 @@ export default function NotificationSettings() {
   }, [user]);
 
   const fetchNotificationSettings = async () => {
+    if (!user) return;
+    
     try {
-      const { data, error } = await supabase
-        .from('notification_settings')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-        
-      if (error) throw error;
+      console.log('Fetching notification settings for user:', user.id);
+      const data = await getUserNotificationSettings(user.id);
       
       if (data) {
+        console.log('Retrieved settings:', data);
         // Convert time format from HH:MM:SS to HH:MM for input compatibility
         const timeOnly = data.notification_time ? data.notification_time.substring(0, 5) : '08:00';
         
@@ -57,6 +60,8 @@ export default function NotificationSettings() {
           enable_email_notifications: data.enable_email_notifications,
           enable_push_notifications: data.enable_push_notifications
         });
+      } else {
+        console.log('No settings found, using defaults');
       }
     } catch (error) {
       console.error('Error fetching notification settings:', error.message);
@@ -104,18 +109,12 @@ export default function NotificationSettings() {
     
     setIsSaving(true);
     try {
-      const { error } = await supabase
-        .from('notification_settings')
-        .upsert({
-          user_id: user.id,
-          notification_time: settingsToSave.notification_time + ':00', // Add seconds for database format
-          days_before_birthday: settingsToSave.days_before_birthday,
-          days_before_anniversary: settingsToSave.days_before_anniversary,
-          enable_email_notifications: settingsToSave.enable_email_notifications,
-          enable_push_notifications: settingsToSave.enable_push_notifications
-        });
-        
-      if (error) throw error;
+      console.log('Saving notification settings:', settingsToSave);
+      const success = await saveUserNotificationSettings(user.id, settingsToSave);
+      
+      if (!success) {
+        throw new Error('Failed to save notification settings');
+      }
       
       // Show success message
       setShowSuccess(true);
@@ -162,7 +161,7 @@ export default function NotificationSettings() {
   }
 
   return (
-    <div className="notification-settings bg-white border border-gray-200 rounded-lg p-6 mb-6">
+    <div className="notification-settings bg-white border border-gray-200 rounded-lg p-6 mb-6 shadow-sm">
       <h3 className="text-xl font-semibold mb-4">Notification Preferences</h3>
       
       {showSuccess && (
@@ -227,7 +226,12 @@ export default function NotificationSettings() {
               <label htmlFor="enable_email_notifications" className="text-gray-600">
                 Email notifications
               </label>
+              <span className="ml-2 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">New!</span>
             </div>
+          </div>
+          
+          <div className="mt-3 text-sm text-gray-500">
+            <p>Email notifications will be sent to: {user.email}</p>
           </div>
         </div>
         
